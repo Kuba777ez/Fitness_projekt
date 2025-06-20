@@ -37,7 +37,10 @@ def add_club() -> None:
     entry_miejscowosc_club.delete(0, END)
 
     entry_nazwa_club.focus()
+    update_club_comboboxes()
     show_clubs()
+
+
 
 
 def show_clubs():
@@ -91,6 +94,12 @@ def show_club_details():
     map_widget.set_zoom(15)
     map_widget.set_position(clubs[i].coordinates[0], clubs[i].coordinates[1])
 
+def get_location_by_club_name(club_name: str) -> str:
+    for club in clubs:
+        if club.name == club_name:
+            return club.location
+    return None  # jeśli nie znaleziono
+
 
 # employee
 employees: list = []
@@ -119,7 +128,12 @@ class Employee:
 def add_employee() -> None:
     name = entry_imie_employee.get()
     surname = entry_nazwisko_employee.get()
-    location = entry_miejscowosc_employee.get()
+    selected_club = club_combobox_employee.get()
+    location = get_location_by_club_name(selected_club)
+
+    if not location:
+        print("Nie wybrano klubu lub klub nie istnieje.")
+        return
 
     employee = Employee(name=name, surname=surname, location=location)
     employees.append(employee)
@@ -127,10 +141,11 @@ def add_employee() -> None:
 
     entry_imie_employee.delete(0, END)
     entry_nazwisko_employee.delete(0, END)
-    entry_miejscowosc_employee.delete(0, END)
+    club_combobox_employee.set("")
 
     entry_imie_employee.focus()
     show_employees()
+
 
 
 def show_employees():
@@ -217,7 +232,12 @@ class User:
 def add_user() -> None:
     name = entry_imie_user.get()
     surname = entry_nazwisko_user.get()
-    location = entry_miejscowosc_user.get()
+    selected_club = club_combobox_user.get()
+    location = get_location_by_club_name(selected_club)
+
+    if not location:
+        print("Nie wybrano klubu lub klub nie istnieje.")
+        return
 
     user = User(name=name, surname=surname, location=location)
     users.append(user)
@@ -225,10 +245,11 @@ def add_user() -> None:
 
     entry_imie_user.delete(0, END)
     entry_nazwisko_user.delete(0, END)
-    entry_miejscowosc_user.delete(0, END)
+    club_combobox_user.set("")
 
     entry_imie_user.focus()
     show_users()
+
 
 
 def show_users():
@@ -404,7 +425,7 @@ label_nazwisko_employee = Label(f_form_employee, text='Nazwisko:')
 label_nazwisko_employee.grid(row=2, column=0, sticky=W)
 
 label_miejscowosc_employee = Label(f_form_employee, text='Miejscowość:')
-label_miejscowosc_employee.grid(row=3, column=0, sticky=W)
+
 
 entry_imie_employee = Entry(f_form_employee)
 entry_imie_employee.grid(row=1, column=1)
@@ -413,7 +434,7 @@ entry_nazwisko_employee = Entry(f_form_employee)
 entry_nazwisko_employee.grid(row=2, column=1)
 
 entry_miejscowosc_employee = Entry(f_form_employee)
-entry_miejscowosc_employee.grid(row=3, column=1)
+
 
 buttom_dodaj_obiekt_employee = Button(f_form_employee, text='Dodaj', command=add_employee)
 buttom_dodaj_obiekt_employee.grid(row=5, column=0, columnspan=2)
@@ -449,7 +470,7 @@ label_nazwisko_user = Label(f_form_user, text='Nazwisko:')
 label_nazwisko_user.grid(row=2, column=0, sticky=W)
 
 label_miejscowosc_user = Label(f_form_user, text='Miejscowość:')
-label_miejscowosc_user.grid(row=3, column=0, sticky=W)
+
 
 entry_imie_user = Entry(f_form_user)
 entry_imie_user.grid(row=1, column=1)
@@ -458,9 +479,36 @@ entry_nazwisko_user = Entry(f_form_user)
 entry_nazwisko_user.grid(row=2, column=1)
 
 entry_miejscowosc_user = Entry(f_form_user)
-entry_miejscowosc_user.grid(row=3, column=1)
+
 
 buttom_dodaj_obiekt_user = Button(f_form_user, text='Dodaj', command=add_user)
 buttom_dodaj_obiekt_user.grid(row=5, column=0, columnspan=2)
+
+from tkinter import StringVar
+from tkinter.ttk import Combobox
+
+# --- Zmienna z listą klubów do rozwijanej listy ---
+def update_club_comboboxes():
+    club_names = [club.name for club in clubs]
+    club_combobox_user['values'] = club_names
+    club_combobox_employee['values'] = club_names
+
+# --- Dla Użytkownika ---
+label_klub_user = Label(f_form_user, text='Nazwa Klubu:')
+label_klub_user.grid(row=4, column=0, sticky=W)
+
+club_combobox_user_var = StringVar()
+club_combobox_user = Combobox(f_form_user, textvariable=club_combobox_user_var, state="readonly")
+club_combobox_user.grid(row=4, column=1)
+
+# --- Dla Pracownika ---
+label_klub_employee = Label(f_form_employee, text='Nazwa Klubu:')
+label_klub_employee.grid(row=4, column=0, sticky=W)
+
+club_combobox_employee_var = StringVar()
+club_combobox_employee = Combobox(f_form_employee, textvariable=club_combobox_employee_var, state="readonly")
+club_combobox_employee.grid(row=4, column=1)
+
+
 
 root.mainloop()
