@@ -9,12 +9,13 @@ clubs: list = []
 
 
 class Club:
-    def __init__(self, name, location):
+    def __init__(self, name, location, map_widget):
         self.name = name
         self.location = location
         self.coordinates = self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name}')
+
 
     def get_coordinates(self) -> list:
         adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
@@ -29,7 +30,8 @@ def add_club() -> None:
     name = entry_nazwa_club.get()
     location = entry_miejscowosc_club.get()
 
-    club = Club(name=name, location=location)
+    club = Club(name=name, location=location, map_widget=map_widget_club)
+
     clubs.append(club)
     print(clubs)
 
@@ -106,7 +108,7 @@ employees: list = []
 
 
 class Employee:
-    def __init__(self, name, surname, location):
+    def __init__(self, name, surname, location, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
@@ -135,7 +137,8 @@ def add_employee() -> None:
         print("Nie wybrano klubu lub klub nie istnieje.")
         return
 
-    employee = Employee(name=name, surname=surname, location=location)
+    employee = Employee(name=name, surname=surname, location=location, map_widget=map_widget_employee)
+
     employees.append(employee)
     print(employees)
 
@@ -210,13 +213,14 @@ users: list = []
 
 
 class User:
-    def __init__(self, name, surname, location):
+    def __init__(self, name, surname, location, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
         self.coordinates = self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.surname}')
+
 
     def get_coordinates(self) -> list:
         import requests
@@ -239,7 +243,8 @@ def add_user() -> None:
         print("Nie wybrano klubu lub klub nie istnieje.")
         return
 
-    user = User(name=name, surname=surname, location=location)
+    user = User(name=name, surname=surname, location=location, map_widget=map_widget_user)
+
     users.append(user)
     print(users)
 
@@ -328,32 +333,36 @@ notebook.add(frame_club, text='Kluby')
 notebook.add(frame_user, text='Użytkownicy')
 notebook.add(frame_employee, text='Pracownicy')
 
+# ramka_mapa_club
+f_map_club = Frame(frame_club)
+f_map_club.grid(row=0, column=0, columnspan=2)
+
+# CLUB map
+map_widget_club = tkintermapview.TkinterMapView(f_map_club, width=1200, height=400, corner_radius=0)
+map_widget_club.grid(row=0, column=0, columnspan=2)
+map_widget_club.set_position(52.23, 21.00)
+map_widget_club.set_zoom(6)
+
 # ramka_mapa_user
 f_map_user = Frame(frame_user)
 f_map_user.grid(row=0, column=0, columnspan=2)
 
-map_widget = tkintermapview.TkinterMapView(f_map_user, width=1200, height=400, corner_radius=0)
-map_widget.grid(row=0, column=0, columnspan=2)
-map_widget.set_position(52.23, 21.00)
-map_widget.set_zoom(6)
+# USER map
+map_widget_user = tkintermapview.TkinterMapView(f_map_user, width=1200, height=400, corner_radius=0)
+map_widget_user.grid(row=0, column=0, columnspan=2)
+map_widget_user.set_position(52.23, 21.00)
+map_widget_user.set_zoom(6)
 
 # ramka_mapa_employee
 f_map_employee = Frame(frame_employee)
 f_map_employee.grid(row=0, column=0, columnspan=2)
 
-map_widget = tkintermapview.TkinterMapView(f_map_employee, width=1200, height=400, corner_radius=0)
-map_widget.grid(row=6, column=0, columnspan=2)
-map_widget.set_position(52.23, 21.00)
-map_widget.set_zoom(6)
+# EMPLOYEE map
+map_widget_employee = tkintermapview.TkinterMapView(f_map_employee, width=1200, height=400, corner_radius=0)
+map_widget_employee.grid(row=6, column=0, columnspan=2)
+map_widget_employee.set_position(52.23, 21.00)
+map_widget_employee.set_zoom(6)
 
-# ramka_mapa_club
-f_map_club = Frame(frame_club)
-f_map_club.grid(row=0, column=0, columnspan=2)
-
-map_widget = tkintermapview.TkinterMapView(f_map_club, width=1200, height=400, corner_radius=0)
-map_widget.grid(row=0, column=0, columnspan=2)
-map_widget.set_position(52.23, 21.00)
-map_widget.set_zoom(6)
 
 # ramka_lista_obiektow_club
 f_list_club = Frame(frame_club)
